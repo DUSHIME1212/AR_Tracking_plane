@@ -1,5 +1,3 @@
-# Custom Plane AR Tracking
-
 ## Overview
 
 This Unity project demonstrates an AR application using AR Foundation. It features custom plane detection and visualization, interactive object placement, and user interface controls for object manipulation.
