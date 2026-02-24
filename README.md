@@ -55,3 +55,17 @@ This Unity project demonstrates an AR application using AR Foundation. It featur
 5.  **Place Object**: Tap on a visualized plane to place your object.
 6.  **Customize**: Use the colored buttons to change the object's color.
 7.  **Interact**: Use two fingers to pinch (scale) or twist (rotate) the object.
+
+## Assignment Documentation
+
+### 1. Plane Tracking Type
+
+For this assignment, I have chosen to implement **Horizontal Plane Tracking**. This is ideal for placing objects on floors, tables, and other flat surfaces common in indoor AR experiences.
+
+### 2. Implementation Approach & Choices
+
+- **UI System**: I implemented a two-part UI system. A **Welcome Screen** provides user instructions using an interactive **Slider** (non-button element) to browse steps. Once the user clicks "Start", the AR session initializes.
+- **Custom Tracker**: I replaced the default AR Plane visualizer with a custom material and FBX support. The tracker is designed to be visually distinct and fulfills the requirement of personalization.
+- **Object Spawning**: A dedicated `ObjectSpawner` script handles raycasting. I implemented a strict **single-instance logic**; once an object is placed, the system stops detecting new planes and hides existing ones to focus on the interaction and save device resources.
+- **Real-time Interaction**: I used a `ColorController` to allow users to change the object's appearance instantly. Gestures for **Scaling (Pinch)** and **Rotation (Twist)** were implemented to provide a natural 3D interaction experience.
+- **Resource Management**: Plane detection is toggled off after placement to optimize performance on mobile devices.

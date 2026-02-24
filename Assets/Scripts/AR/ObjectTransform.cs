@@ -165,7 +165,7 @@ public class ObjectManipulator : MonoBehaviour
             // Debug feedback
             if (Mathf.Abs(angleDelta) > 1f) // Only log significant changes
             {
-                Debug.Log($"Rotating: {angleDelta:F1}°");
+                Debug.Log($"Rotating: {angleDelta:F1}Â°");
             }
 
             // Update for next frame

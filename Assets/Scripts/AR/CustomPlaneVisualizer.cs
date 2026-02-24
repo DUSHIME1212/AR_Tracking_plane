@@ -3,8 +3,8 @@ using UnityEngine.XR.ARFoundation;
 
 /// <summary>
 /// Visualizes AR planes with custom FBX model and texture showing student name
-/// Tracking Type: Horizontal and Vertical planes
-/// Author: [YOUR FULL NAME HERE]
+/// Tracking Type: Horizontal Planes
+/// Author: DUSHIME
 /// Date: February 2025
 /// </summary>
 [RequireComponent(typeof(ARPlane))]
