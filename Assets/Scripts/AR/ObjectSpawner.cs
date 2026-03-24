@@ -38,6 +38,10 @@ public class ObjectSpawner : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        // Try to auto-link missing references
+        if (raycastManager == null) raycastManager = FindFirstObjectByType<ARRaycastManager>();
+        if (planeManager == null) planeManager = FindFirstObjectByType<ARPlaneManager>();
+
         // Validate references
         if (objectToSpawn == null)
         {
@@ -46,15 +50,15 @@ public class ObjectSpawner : MonoBehaviour
 
         if (raycastManager == null)
         {
-            Debug.LogError("AR Raycast Manager is not assigned!");
+            Debug.LogError("AR Raycast Manager NOT FOUND! Please ensure XROrigin has an ARRaycastManager.");
         }
 
         if (planeManager == null)
         {
-            Debug.LogError("AR Plane Manager is not assigned!");
+            Debug.LogError("AR Plane Manager NOT FOUND! Please ensure XROrigin has an ARPlaneManager.");
         }
 
-        Debug.Log("Object Spawner initialized. Tap on a detected plane to place object.");
+        Debug.Log("Object Spawner initialized.");
     }
 
     /// <summary>

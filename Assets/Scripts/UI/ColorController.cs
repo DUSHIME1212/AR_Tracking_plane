@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.ARFoundation;
 
 
 /// Manages color selection UI and applies colors to spawned object
@@ -28,10 +29,14 @@ public class ColorController : MonoBehaviour
  
     private void Start()
     {
-        // Validate references
+        // Try to auto-link missing reference
         if (objectSpawner == null)
         {
-            Debug.LogError("Object Spawner not assigned in ColorController!");
+            objectSpawner = FindFirstObjectByType<ObjectSpawner>();
+            if (objectSpawner != null) 
+                Debug.Log("Auto-linked ObjectSpawner to ColorController");
+            else
+                Debug.LogError("Object Spawner not found in scene for ColorController!");
         }
 
         // Setup button listeners
@@ -65,7 +70,17 @@ public class ColorController : MonoBehaviour
     /// <param name="colorName">Name of color for debug logging</param>
     private void ChangeColor(Color newColor, string colorName)
     {
-        // Check if object has been spawned
+        // 1. Change color of spawned object (existing logic)
+        ApplyColorToSpawnedObject(newColor);
+
+        // 2. Change color of AR planes
+        ApplyColorToARPlanes(newColor);
+
+        Debug.Log($"✓ Color changed to {colorName}.");
+    }
+
+    private void ApplyColorToSpawnedObject(Color newColor)
+    {
         if (objectSpawner == null)
         {
             Debug.LogWarning("Cannot change color: Object Spawner is null");
@@ -78,25 +93,20 @@ public class ColorController : MonoBehaviour
             return;
         }
 
-        // Get the spawned object
         GameObject spawnedObject = objectSpawner.GetSpawnedObject();
-
         if (spawnedObject == null)
         {
             Debug.LogWarning("Spawned object reference is null");
             return;
         }
 
-        // Find renderer - check object and all children
         Renderer[] renderers = spawnedObject.GetComponentsInChildren<Renderer>();
-
         if (renderers.Length == 0)
         {
             Debug.LogError("No Renderer found on spawned object or its children!");
             return;
         }
 
-        // Apply color to all renderers
         int renderersChanged = 0;
         foreach (Renderer renderer in renderers)
         {
@@ -106,8 +116,27 @@ public class ColorController : MonoBehaviour
                 renderersChanged++;
             }
         }
+        Debug.Log($"Updated {renderersChanged} material(s) on spawned object.");
+    }
 
-        Debug.Log($"✓ Color changed to {colorName}. Updated {renderersChanged} material(s).");
+    private void ApplyColorToARPlanes(Color newColor)
+    {
+        // Find all active ARPlane objects in the scene
+        ARPlane[] planes = FindObjectsByType<ARPlane>(FindObjectsSortMode.None);
+        
+        foreach (ARPlane plane in planes)
+        {
+            Renderer[] renderers = plane.GetComponentsInChildren<Renderer>();
+            foreach (Renderer renderer in renderers)
+            {
+                if (renderer != null && renderer.material != null)
+                {
+                    renderer.material.color = newColor;
+                }
+            }
+        }
+        
+        Debug.Log($"Updated color for {planes.Length} planes.");
     }
 
     /// Cleanup when destroyed

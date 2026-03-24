@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using TMPro;
@@ -49,6 +49,9 @@ public class WelcomeUIController : MonoBehaviour
   
     private void Start()
     {
+        // Try to auto-link missing references
+        AutoLinkReferences();
+
         // Disable AR tracking until user is ready
         DisableARTracking();
 
@@ -58,24 +61,31 @@ public class WelcomeUIController : MonoBehaviour
             welcomePanel.SetActive(true);
         }
 
-        // Game canvas can stay visible (color buttons won't work until object spawns anyway)
-        // Or you can hide it initially:
+        // Hide color buttons initially (Game Canvas)
         if (gameCanvas != null)
         {
-            gameCanvas.SetActive(true); // Keep visible or set to false to hide initially
+            gameCanvas.SetActive(false); 
         }
 
         // Setup button click listener
         if (startButton != null)
         {
+            startButton.onClick.RemoveAllListeners(); // Clear old ones to be safe
             startButton.onClick.AddListener(OnStartButtonClicked);
+            Debug.Log($"Start Button '{startButton.name}' listener attached.");
         }
         else
         {
-            Debug.LogError("Start Button not assigned in WelcomeUIController!");
+            Debug.LogError("Start Button NOT ASSIGNED! Trying to find it in children...");
+            startButton = GetComponentInChildren<Button>();
+            if (startButton != null) 
+            {
+                startButton.onClick.AddListener(OnStartButtonClicked);
+                Debug.Log($"Found and attached to button: {startButton.name}");
+            }
         }
 
-        // Setup slider listener for interactive instruction browsing
+        // Setup slider listener...
         if (instructionSlider != null)
         {
             instructionSlider.minValue = 0;
@@ -83,16 +93,29 @@ public class WelcomeUIController : MonoBehaviour
             instructionSlider.wholeNumbers = true;
             instructionSlider.value = 0;
             instructionSlider.onValueChanged.AddListener(OnSliderValueChanged);
-
-            // Display first instruction
             UpdateInstructionDisplay(0);
         }
-        else
+
+        // Ensure instruction text doesn't block raycasts (clicks)
+        if (instructionText != null)
         {
-            Debug.LogError("Instruction Slider not assigned in WelcomeUIController!");
+            instructionText.raycastTarget = false;
         }
 
-        Debug.Log("Welcome UI initialized successfully");
+        // Ensure we have an EventSystem
+        if (UnityEngine.EventSystems.EventSystem.current == null)
+        {
+            Debug.LogWarning("NO EVENTSYSTEM FOUND! Creating one automatically...");
+            new GameObject("EventSystem", typeof(UnityEngine.EventSystems.EventSystem), typeof(UnityEngine.EventSystems.StandaloneInputModule));
+        }
+    }
+
+    private void AutoLinkReferences()
+    {
+        if (arPlaneManager == null) arPlaneManager = FindFirstObjectByType<ARPlaneManager>();
+        if (arRaycastManager == null) arRaycastManager = FindFirstObjectByType<ARRaycastManager>();
+        
+        Debug.Log("Auto-linked AR Managers in WelcomeUIController");
     }
 
     

@@ -14,6 +14,12 @@ public class CustomPlaneVisualizer : MonoBehaviour
     [Tooltip("The custom material to display on detected planes")]
     [SerializeField] private Material customPlaneMaterial;
 
+    [Tooltip("Student name to display on the plane")]
+    [SerializeField] private string studentName = "DUSHIME";
+
+    [Tooltip("TextMeshPro component for the name label")]
+    [SerializeField] private TMPro.TextMeshPro nameLabel;
+
     [Header("Optional FBX Model")]
     [Tooltip("Optional: Child FBX model for visual decoration")]
     [SerializeField] private GameObject fbxModel;
@@ -35,10 +41,22 @@ public class CustomPlaneVisualizer : MonoBehaviour
             meshRenderer.material = customPlaneMaterial;
         }
 
+        // Initialize name label
+        if (nameLabel == null)
+        {
+            nameLabel = GetComponentInChildren<TMPro.TextMeshPro>();
+        }
+
+        if (nameLabel != null)
+        {
+            nameLabel.text = studentName;
+            Debug.Log($"Name label set to: {studentName}");
+        }
+
         // Apply material to all child renderers (for FBX models)
         ApplyMaterialToChildren();
 
-        Debug.Log($"Custom plane tracker initialized with FBX model");
+        Debug.Log($"Custom plane tracker initialized with {studentName}'s name and FBX model");
     }
 
     /// <summary>

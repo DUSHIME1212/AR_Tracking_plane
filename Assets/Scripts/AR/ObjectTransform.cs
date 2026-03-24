@@ -35,7 +35,9 @@ public class ObjectManipulator : MonoBehaviour
     {
         if (objectSpawner == null)
         {
-            Debug.LogError("Object Spawner not assigned in ObjectManipulator!");
+            objectSpawner = FindFirstObjectByType<ObjectSpawner>();
+            if (objectSpawner != null) Debug.Log("Auto-linked ObjectSpawner to ObjectManipulator");
+            else Debug.LogError("Object Spawner not found in scene!");
         }
 
         Debug.Log("Object Manipulator initialized. Use two fingers to scale and rotate.");
